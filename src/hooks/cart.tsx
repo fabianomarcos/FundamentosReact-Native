@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 
+import { StorageEnum } from '../utils/storage-enum';
 import AsyncStorage from '@react-native-community/async-storage';
 
 interface Product {
@@ -30,23 +31,56 @@ const CartProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadProducts(): Promise<void> {
-      // TODO LOAD ITEMS FROM ASYNC STORAGE
+      const storagesProducts = await AsyncStorage.getItem(StorageEnum.products);
+
+      if (storagesProducts) {
+        setProducts([...JSON.parse(storagesProducts)]);
+      }
     }
 
     loadProducts();
   }, []);
 
   const addToCart = useCallback(async product => {
-    // TODO ADD A NEW ITEM TO THE CART
-  }, []);
+    const productsExist = products.find(p => p.id === product.id);
+
+    if (productsExist) {
+      setProducts(products.map(p =>
+        p.id === product.id
+          ? {...product, quantity: p.quantity + 1 } : p)
+      );
+    } else {
+      setProducts([...products, {...product, quantity: 1}]);
+    }
+
+    await AsyncStorage.setItem(StorageEnum.products, JSON.stringify(products));
+  }, [products]);
 
   const increment = useCallback(async id => {
-    // TODO INCREMENTS A PRODUCT QUANTITY IN THE CART
-  }, []);
+    const updateProducts = products.map(product =>
+      product.id === id
+        ? {...product, quantity: product?.quantity + 1}
+        : product);
+
+    setProducts(updateProducts);
+
+    await AsyncStorage.setItem(
+      StorageEnum.products, JSON.stringify(updateProducts)
+    );
+  }, [products]);
 
   const decrement = useCallback(async id => {
-    // TODO DECREMENTS A PRODUCT QUANTITY IN THE CART
-  }, []);
+    const updateProducts = products.map(product =>
+      product.id === id && product.quantity > 1
+        ? {...product, quantity: product?.quantity - 1}
+        : product);
+
+    setProducts(updateProducts)
+
+    await AsyncStorage.setItem(
+      StorageEnum.products, JSON.stringify(updateProducts)
+    );
+  }, [products]);
 
   const value = React.useMemo(
     () => ({ addToCart, increment, decrement, products }),
