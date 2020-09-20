@@ -58,9 +58,8 @@ const Cart: React.FC = () => {
 
   const totalItemsInCart = useMemo(() => {
     const total = products.reduce((accumulator, product) => {
-      console.log(accumulator, product.quantity);
-      return accumulator + product.quantity;
 
+      return accumulator + product.quantity;
     }, 0);
 
     return total;
@@ -115,7 +114,7 @@ const Cart: React.FC = () => {
       </ProductContainer>
       <TotalProductsContainer>
         <FeatherIcon name="shopping-cart" color="#fff" size={24} />
-        <TotalProductsText>{`${totalItemsInCart} items`}</TotalProductsText>
+        <TotalProductsText>{`${totalItemsInCart} itens`}</TotalProductsText>
         <SubtotalValue>{cartTotal}</SubtotalValue>
       </TotalProductsContainer>
     </Container>
