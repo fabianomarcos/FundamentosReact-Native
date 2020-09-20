@@ -33,7 +33,6 @@ const FloatingCart: React.FC = () => {
       return accumulator + product.quantity;
     }, 0);
 
-    console.log(total, 'itens');
     return total;
   }, [products]);
 
